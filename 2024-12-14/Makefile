@@ -1,31 +1,39 @@
-SRC = main.cpp
-OBJ = main.o
-CC = g++
-# SFML_DIR = /opt/homebrew/Cellar/sfml/2.6.1
-FLAGS = -std=c++17
-# VIEWFLAGS = -std=c++17 -I$(SFML_DIR)/include -L$(SFML_DIR)/lib -lsfml-graphics -lsfml-window -lsfml-system
-NAME = run
 
-all: $(NAME)
+SRCS := \
+	main.cpp
 
-$(NAME): $(OBJ)
-	$(CC) $(FLAGS) $^ -o $@
+OBJS := $(SRCS:.cpp=.o)
+INCLUDE := ./include
+CXX := c++ -std=c++17
+SFMLFLAGS = -I/opt/homebrew/Cellar/sfml/2.6.1/include -L/opt/homebrew/Cellar/sfml/2.6.1/lib -lsfml-graphics -lsfml-window -lsfml-system
+NAME := gravity
 
-test: test.o
-	$(CC) $(FLAGS) $^ -o $@
+SUBJECTNAME := "2024 12 14 - 1"
+RED := \033[31m
+GREEN := \033[32m
+BLUE := \033[34m
+WHITE := \033[0m
 
-%.o: %.cpp
-	$(CC) $(FLAGS) -c $^
+.PHONY: all clean fclean re
 
-re:
+all :
+	@ echo "[$(BLUE)$(SUBJECTNAME)$(WHITE)] $(GREEN)make all$(WHITE)"
+	@ make $(NAME)
+
+re : fclean all
+	@ echo "[$(BLUE)$(SUBJECTNAME)$(WHITE)] $(GREEN)make re$(WHITE)"
+
+$(NAME) : $(OBJS)
+	@ $(CXX) $(CXXFLAGS) $(SFMLFLAGS) $^ -o $@
+
+%.o : %.cpp
+	@ $(CXX) $(CXXFLAGS) $(SFMLFLAGS) -c $^ -I$(INCLUDE) -o $@
+
+fclean :
+	@ echo "[$(BLUE)$(SUBJECTNAME)$(WHITE)] $(GREEN)make fclean$(WHITE)"
 	@ make clean
-	@ make all
-
-clean:
-	@ rm -rf $(OBJ)
 	@ rm -rf $(NAME)
-	@ rm -rf test
-	@ rm -rf test.o
 
-reset:
-	cat base.cpp > main.cpp
+clean :
+	@ echo "[$(BLUE)$(SUBJECTNAME)$(WHITE)] $(GREEN)make clean$(WHITE)"
+	@ rm -rf $(OBJS)
