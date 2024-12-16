@@ -66,7 +66,6 @@ int return_ans(vector<Dots> &dotsContainer) {
 }
 
 void print_arr(vector<Dots> &dotsContainer) {
-	cout << "==== print ====\n";
 	for (int i = 0; i < HEIGHT; i++) {
 		for (int j = 0; j < WIDTH; j++) {
 			arr[i][j] = 0;
@@ -80,7 +79,7 @@ void print_arr(vector<Dots> &dotsContainer) {
 			if (arr[i][j] == 0)
 				cout << '.';
 			else
-				cout << arr[i][j];
+				cout << '#';
 		}
 		cout << '\n';
 	}
@@ -148,8 +147,21 @@ void print_sfml(vector<Dots> &dotsContainer) {
 	}
 }
 
+void print_cls(vector<Dots> &dotsContainer) {
+	for (int i = 1; i <= 7344; i++) {
+		system("clear");
+		cout << "cnt: " << i << '\n';
+		for (Dots &item: dotsContainer) {
+			item.move();
+		}
+		print_arr(dotsContainer);
+	}
+}
+
 int main(int argc, char *argv[]) {
 	vector<Dots> dotsContainer;
+	if (argc != 2)
+		return 1;
 	ifstream file(argv[1]); // 파일 열기
 
 	while (1) {
@@ -162,6 +174,7 @@ int main(int argc, char *argv[]) {
 		file >> v_x >> tmp >> v_y;
 			dotsContainer.push_back(Dots(y, x, v_y, v_x));
 	}
-	print_sfml(dotsContainer);
+	// print_sfml(dotsContainer);
+	print_cls(dotsContainer);
 	return 0;
 }

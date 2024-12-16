@@ -6,7 +6,7 @@ OBJS := $(SRCS:.cpp=.o)
 INCLUDE := ./include
 CXX := c++ -std=c++17
 SFMLFLAGS = -I/opt/homebrew/Cellar/sfml/2.6.1/include -L/opt/homebrew/Cellar/sfml/2.6.1/lib -lsfml-graphics -lsfml-window -lsfml-system
-NAME := gravity
+NAME := run
 
 SUBJECTNAME := "2024 12 14 - 1"
 RED := \033[31m
