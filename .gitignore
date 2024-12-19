@@ -1,0 +1,8 @@
+*.o
+*run*
+*input*
+input
+/font/*
+c_cpp_properties.json
+settings.json
+BMDOHYEON_ttf.ttf
