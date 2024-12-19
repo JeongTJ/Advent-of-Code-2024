@@ -15,7 +15,7 @@ NAME1 := run1
 NAME2 := run2
 NAME := run
 
-SUBJECTNAME := "2024 12 15"
+SUBJECTNAME := "2024 12 18"
 RED := \033[31m
 GREEN := \033[32m
 BLUE := \033[34m
