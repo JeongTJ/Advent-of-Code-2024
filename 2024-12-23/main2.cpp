@@ -44,11 +44,21 @@ int main(int argc, char *argv[]) {
 	for (int k = 0; k < 26 * 26; k++) {
 		set<int> conn_set;
 		set<int> remove_set;
+		// vector<int> conn_vec;
+		// vector<int> remove_vec;
 		for (int i = 0; i < 26 * 26; i++) {
 			if (conn[k][i])
 				conn_set.insert(i);
 		}
 
+		// for (int i: tmp) {
+		// 	cout << _rhash(i) << ',';
+		// }
+
+		for (set<int>::iterator it = conn_set.begin(); it != conn_set.end(); it++) {
+			cout << _rhash(*it) << ',';
+		}
+		cout << '\n';
 		for (set<int>::iterator it1 = conn_set.begin(); it1 != conn_set.end(); it1++) {
 			int cnt = 0;
 			for (set<int>::iterator it2 = conn_set.begin(); it2 != conn_set.end(); it2++) {
@@ -60,10 +70,22 @@ int main(int argc, char *argv[]) {
 				remove_set.insert(*it1);
 			}
 		}
+		for (set<int>::iterator it1 = conn_set.begin(); it1 != conn_set.end(); it1++) {
+			for (set<int>::iterator it2 = conn_set.begin(); it2 != conn_set.end(); it2++) {
+				cout << conn[*it1][*it2];
+				// if (conn[*it1][*it2] == 0) {
+				// 	remove_set.insert(*it2);
+				// 	remove_set.insert(*it1);
+				// }
+			}
+			cout << '\n';
+		}
 
 		for (set<int>::iterator it = remove_set.begin(); it != remove_set.end(); it++) {
 			conn_set.erase(*it);
 		}
+		cout << '\n';
+		cout << '\n';
 		if (max_size < conn_set.size()) {
 			max_size = conn_set.size();
 			max_group = conn_set;
