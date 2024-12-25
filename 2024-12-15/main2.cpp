@@ -6,7 +6,6 @@ int player_x, player_y;
 
 void init_arr() {
 	string s;
-	int coor = 0;
 
 	while (1) {
 		getline(cin, s);
@@ -14,8 +13,16 @@ void init_arr() {
 			break;
 		vector<char> tmp;
 		for (char c: s) {
-			tmp.push_back(c);
-			coor++;
+			if (c == '@') {
+				tmp.push_back(c);
+				tmp.push_back('.');
+			} else if (c == 'O') {
+				tmp.push_back('[');
+				tmp.push_back(']');
+			} else {
+				tmp.push_back(c);
+				tmp.push_back(c);
+			}
 		}
 		arr.push_back(tmp);
 	}
@@ -32,78 +39,101 @@ void find_player() {
 	}
 }
 
-pair<int, int> find_up_empty() {
-	int diff_y = 0, diff_x = 0;
-	int next_y, next_x;
+bool move_check_updown(int y, int x, char dir) {
+	bool res = true;
 
-	while (1) {
-		next_y = player_y + diff_y;
-		next_x = player_x + diff_x;
-		if (!(0 <= next_y && next_y < arr.size() && 0 <= next_x && next_x <= arr[0].size()))
-			break;
-		if (arr[next_y][next_x] == '.')
-			return {next_y, next_x};
-		if (arr[next_y][next_x] == '#')
-			return {-1, -1};
-		diff_y--;
+	if (dir == 'U') {
+		if (arr[y - 1][x] == '[') {
+			res &= move_check_updown(y - 1, x, dir);
+			res &= move_check_updown(y - 1, x + 1, dir);
+		} else if (arr[y - 1][x] == ']') {
+			res &= move_check_updown(y - 1, x, dir);
+			res &= move_check_updown(y - 1, x - 1, dir);
+		} else if (arr[y - 1][x] == '#') {
+			res = false;
+		} else if (arr[y - 1][x] == '.') {
+			res = true;
+		}
+	} else if (dir == 'D') {
+		if (arr[y + 1][x] == '[') {
+			res &= move_check_updown(y + 1, x, dir);
+			res &= move_check_updown(y + 1, x + 1, dir);
+		} else if (arr[y + 1][x] == ']') {
+			res &= move_check_updown(y + 1, x, dir);
+			res &= move_check_updown(y + 1, x - 1, dir);
+		} else if (arr[y + 1][x] == '#') {
+			res = false;
+		} else if (arr[y + 1][x] == '.') {
+			res = true;
+		}
 	}
-	return {-1, -1};
+	return res;
 }
 
-pair<int, int> find_down_empty() {
-	int diff_y = 0, diff_x = 0;
-	int next_y, next_x;
-
-	while (1) {
-		next_y = player_y + diff_y;
-		next_x = player_x + diff_x;
-		if (!(0 <= next_y && next_y < arr.size() && 0 <= next_x && next_x <= arr[0].size()))
-			break;
-		if (arr[next_y][next_x] == '.')
-			return {next_y, next_x};
-		if (arr[next_y][next_x] == '#')
-			return {-1, -1};
-		diff_y++;
+void move_updown(int y, int x, char dir) {
+	if (dir == 'U') {
+		if (arr[y - 1][x] == '[') {
+			move_updown(y - 1, x, dir);
+			move_updown(y - 1, x + 1, dir);
+		} else if (arr[y - 1][x] == ']') {
+			move_updown(y - 1, x, dir);
+			move_updown(y - 1, x - 1, dir);
+		}
+		arr[y - 1][x] = arr[y][x];
+		arr[y][x] = '.';
+	} else if (dir == 'D') {
+		if (arr[y + 1][x] == '[') {
+			move_updown(y + 1, x, dir);
+			move_updown(y + 1, x + 1, dir);
+		} else if (arr[y + 1][x] == ']') {
+			move_updown(y + 1, x, dir);
+			move_updown(y + 1, x - 1, dir);
+		}
+		arr[y + 1][x] = arr[y][x];
+		arr[y][x] = '.';
 	}
-	return {-1, -1};
-
 }
 
-pair<int, int> find_left_empty() {
-	int diff_y = 0, diff_x = 0;
-	int next_y, next_x;
+bool move_check_lr(int y, int x, char dir) {
+	bool res = true;
 
-	while (1) {
-		next_y = player_y + diff_y;
-		next_x = player_x + diff_x;
-		if (!(0 <= next_y && next_y < arr.size() && 0 <= next_x && next_x <= arr[0].size()))
-			break;
-		if (arr[next_y][next_x] == '.')
-			return {next_y, next_x};
-		if (arr[next_y][next_x] == '#')
-			return {-1, -1};
-		diff_x--;
+	if (dir == 'L') {
+		cout << "y: " << y << " x - 1: " << x - 1 << " [" << arr[y][x - 1] << "]" << '\n';
+		if (arr[y][x - 1] == '[' || arr[y][x - 1] == ']') {
+			res &= move_check_lr(y, x - 1, dir);
+		} else if (arr[y][x - 1] == '#') {
+			res = false;
+		} else if (arr[y][x - 1] == '.') {
+			res = true;
+		}
+	} else if (dir == 'R') {
+		if (arr[y][x + 1] == '[' || arr[y][x + 1] == ']') {
+			res &= move_check_lr(y, x + 1, dir);
+		} else if (arr[y][x + 1] == '#') {
+			res = false;
+		} else if (arr[y][x + 1] == '.') {
+			res = true;
+		}
 	}
-	return {-1, -1};
+	return res;
 }
 
-pair<int, int> find_right_empty() {
-	int diff_y = 0, diff_x = 0;
-	int next_y, next_x;
-
-	while (1) {
-		next_y = player_y + diff_y;
-		next_x = player_x + diff_x;
-		if (!(0 <= next_y && next_y < arr.size() && 0 <= next_x && next_x <= arr[0].size()))
-			break;
-		if (arr[next_y][next_x] == '.')
-			return {next_y, next_x};
-		if (arr[next_y][next_x] == '#')
-			return {-1, -1};
-		diff_x++;
+void move_lr(int y, int x, char dir) {
+	if (dir == 'L') {
+		if (arr[y][x - 1] == '[' || arr[y][x - 1] == ']') {
+			move_lr(y, x - 1, dir);
+		}
+		arr[y][x - 1] = arr[y][x];
+		arr[y][x] = '.';
+	} else if (dir == 'R') {
+		if (arr[y][x + 1] == '[' || arr[y][x + 1] == ']') {
+			move_lr(y, x + 1, dir);
+		}
+		arr[y][x + 1] = arr[y][x];
+		arr[y][x] = '.';
 	}
-	return {-1, -1};
 }
+
 
 void print_arr() {
 	for (int i = 0; i < arr.size(); i++) {
@@ -118,7 +148,7 @@ long long get_res() {
 	long long res = 0;
 	for (int i = 0; i < arr.size(); i++) {
 		for (int j = 0; j < arr[i].size(); j++) {
-			if (arr[i][j] == 'O')
+			if (arr[i][j] == '[')
 				res += i * 100 + j;
 		}
 	}
@@ -134,40 +164,34 @@ void run() {
 			break;
 		switch (command) {
 		case '^':
-			next_coor = find_up_empty();
-			if (next_coor.first == -1)
-				break;
-			arr[player_y--][player_x] = '.';
-			arr[next_coor.first][next_coor.second] = 'O';
-			arr[player_y][player_x] = '@';
+			if (move_check_updown(player_y, player_x, 'U')) {
+				move_updown(player_y, player_x, 'U');
+				player_y--;
+			}
 			break;
 		case '>':
-			next_coor = find_right_empty();
-			if (next_coor.first == -1)
-				break;
-			arr[player_y][player_x++] = '.';
-			arr[next_coor.first][next_coor.second] = 'O';
-			arr[player_y][player_x] = '@';
+			if (move_check_lr(player_y, player_x, 'R')) {
+				move_lr(player_y, player_x, 'R');
+				player_x++;
+			}
 			break;
 		case 'v':
-			next_coor = find_down_empty();
-			if (next_coor.first == -1)
-				break;
-			arr[player_y++][player_x] = '.';
-			arr[next_coor.first][next_coor.second] = 'O';
-			arr[player_y][player_x] = '@';
+			if (move_check_updown(player_y, player_x, 'D')) {
+				move_updown(player_y, player_x, 'D');
+				player_y++;
+			}
 			break;
 		case '<':
-			next_coor = find_left_empty();
-			if (next_coor.first == -1)
-				break;
-			arr[player_y][player_x--] = '.';
-			arr[next_coor.first][next_coor.second] = 'O';
-			arr[player_y][player_x] = '@';
+			if (move_check_lr(player_y, player_x, 'L')) {
+				move_lr(player_y, player_x, 'L');
+				player_x--;
+			}
 			break;
 		default:
 			break;
 		}
+		system("clear");
+		print_arr();
 	}
 }
 
